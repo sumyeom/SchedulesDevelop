@@ -25,17 +25,17 @@ public class ScheduleController {
      * @return {@link ResponseEntity<SchedulePostResponseDto>} JSON 응답
      */
     @PostMapping
-    public ResponseEntity<SchedulePostResponseDto> saveSchedule(
+    public ResponseEntity<SchedulePostResponseDto> createSchedule(
             @RequestBody SchedulePostRequestDto requestDto
     ){
-        SchedulePostResponseDto schedulePostResponseDto = scheduleService.save(requestDto.getTitle(), requestDto.getContent(), requestDto.getUsername());
+        SchedulePostResponseDto schedulePostResponseDto = scheduleService.createSchedule(requestDto.getTitle(),requestDto.getContent(),requestDto.getUsername());
 
         return new ResponseEntity<>(schedulePostResponseDto, HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<List<ScheduleGetResponseDto>> findAllSchedule(){
-        List<ScheduleGetResponseDto> scheduleGetResponseDtoList = scheduleService.findAll();
+        List<ScheduleGetResponseDto> scheduleGetResponseDtoList = scheduleService.findAllSchedule();
 
         return new ResponseEntity<>(scheduleGetResponseDtoList,HttpStatus.OK);
     }
@@ -52,7 +52,7 @@ public class ScheduleController {
             @PathVariable Long scheduleId,
             @RequestBody SchedulePutRequestDto requestDto
     ){
-        return new ResponseEntity<>(scheduleService.updateSchedule(scheduleId, requestDto.getTitle(), requestDto.getContent(), requestDto.getUsername()),HttpStatus.OK);
+        return new ResponseEntity<>(scheduleService.updateSchedule(scheduleId, requestDto.getTitle(), requestDto.getContent()),HttpStatus.OK);
     }
 
     @DeleteMapping("/{scheduleId}")

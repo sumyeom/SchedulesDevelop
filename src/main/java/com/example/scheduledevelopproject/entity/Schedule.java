@@ -17,19 +17,23 @@ public class Schedule extends BaseEntity {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "longtext")
     private String content;
 
-    @Column(nullable = false)
-    private String username;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Schedule(){
     }
 
-    public Schedule(String title, String content, String username) {
+    public Schedule(String title, String content) {
         this.title = title;
         this.content = content;
-        this.username = username;
+    }
+
+    public void setUser(User user){
+        this.user = user;
     }
 
 }
