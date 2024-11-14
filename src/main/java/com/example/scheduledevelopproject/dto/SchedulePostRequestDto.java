@@ -15,7 +15,7 @@ public class SchedulePostRequestDto {
     private final String content;
 
     @NotBlank(message = "이름을 입력해주세요.")
-    @Size(min = 0,max=5,message="이름은 10글자 이내로 입력해주세요.")
+    @Size(min = 0,max=20,message="이름은 20글자 이내로 입력해주세요.")
     private final String username;
 
     public SchedulePostRequestDto(String title, String content, String username) {

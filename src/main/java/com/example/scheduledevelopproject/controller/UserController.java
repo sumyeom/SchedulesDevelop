@@ -1,5 +1,6 @@
 package com.example.scheduledevelopproject.controller;
 
+import com.example.scheduledevelopproject.config.PasswordEncoder;
 import com.example.scheduledevelopproject.dto.UserGetResponseDto;
 import com.example.scheduledevelopproject.dto.UserPostRequestDto;
 import com.example.scheduledevelopproject.dto.UserPostResponseDto;
@@ -22,6 +23,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping
     public ResponseEntity<UserPostResponseDto> createUser(
@@ -32,7 +34,8 @@ public class UserController {
         if(bindingResult.hasErrors()) {
             ValidationUtils.bindErrorMessage(bindingResult);
         }
-        UserPostResponseDto userPostResponseDto = userService.createUser(requestDto.getUsername(), requestDto.getEmail(),requestDto.getPassword());
+        UserPostResponseDto userPostResponseDto = userService.createUser(requestDto.getUsername(), requestDto.getEmail(),passwordEncoder.encode(requestDto.getPassword()));
+
         return new ResponseEntity<>(userPostResponseDto, HttpStatus.OK);
     }
 

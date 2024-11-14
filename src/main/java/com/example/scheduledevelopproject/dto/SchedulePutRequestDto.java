@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public class SchedulePutRequestDto {
     @NotBlank(message = "제목을 입력해주세요.")
-    @Size(min=0, max=10,message = "제목은 10자 이내로 입력해주세요.")
+    @Size(min=0, max=20,message = "제목은 10자 이내로 입력해주세요.")
     private final String title;
 
     @NotBlank(message = "내용을 입력해주세요.")

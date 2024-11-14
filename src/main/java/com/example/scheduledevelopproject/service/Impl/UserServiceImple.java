@@ -1,5 +1,6 @@
 package com.example.scheduledevelopproject.service.Impl;
 
+import com.example.scheduledevelopproject.config.PasswordEncoder;
 import com.example.scheduledevelopproject.dto.UserGetResponseDto;
 import com.example.scheduledevelopproject.dto.UserPostResponseDto;
 import com.example.scheduledevelopproject.entity.User;
@@ -18,9 +19,11 @@ public class UserServiceImple implements UserService {
 
     private final UserRepository userRepository;
     private final ScheduleRepositroy scheduleRepositroy;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserPostResponseDto createUser(String username, String email, String password) {
+        System.out.println(password);
         User user = new User(username,email,password);
         User savedUser = userRepository.save(user);
         return new UserPostResponseDto(savedUser.getId());
@@ -43,7 +46,7 @@ public class UserServiceImple implements UserService {
     @Transactional
     @Override
     public void deleteUser(Long userId) {
-        scheduleRepositroy.deleteByUserId(userId);
+        //scheduleRepositroy.deleteByUserId(userId);
         User user = userRepository.findByIdOrElseThrow(userId);
         userRepository.delete(user);
     }

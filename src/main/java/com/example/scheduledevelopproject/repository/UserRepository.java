@@ -10,9 +10,10 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findUserByUsername(String username);
     Optional<User> findUserByEmailAndPassword(String email, String password);
+    Optional<User> findUserByEmail(String email);
 
-    default User findUserByEmailAndPasswordOrElseThrow(String email, String password) {
-        return findUserByEmailAndPassword(email, password)
+    default User findUserByEmailOrElseThrow(String email) {
+        return findUserByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인 실패"));
     }
     default User findUserByUsernameOrElseThrow(String username){

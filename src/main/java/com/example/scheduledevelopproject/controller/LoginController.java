@@ -1,5 +1,6 @@
 package com.example.scheduledevelopproject.controller;
 
+import com.example.scheduledevelopproject.config.PasswordEncoder;
 import com.example.scheduledevelopproject.dto.*;
 import com.example.scheduledevelopproject.service.LoginService;
 import com.example.scheduledevelopproject.service.UserService;
@@ -8,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -20,14 +22,16 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/")
 @RequiredArgsConstructor
+@Slf4j
 public class LoginController {
 
     private final LoginService loginService;
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(
-            @Valid @RequestBody LoginRequestDto reqeustDto,
+            @Valid @RequestBody LoginRequestDto requestDto,
             HttpServletRequest request,
             BindingResult bindingResult
     ){
@@ -35,13 +39,14 @@ public class LoginController {
         if(bindingResult.hasErrors()) {
             ValidationUtils.bindErrorMessage(bindingResult);
         }
-        LoginResponseDto responseDto = loginService.login(reqeustDto.getEmail(), reqeustDto.getPassword());
+
+        LoginResponseDto responseDto = loginService.login(requestDto.getEmail(), requestDto.getPassword());
         Long userId = responseDto.getId();
         if(userId == null){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
         HttpSession session = request.getSession();
-        session.setAttribute("email", reqeustDto.getEmail());
+        session.setAttribute("email", requestDto.getEmail());
         return new ResponseEntity<>(responseDto,HttpStatus.OK);
     }
 
@@ -59,7 +64,7 @@ public class LoginController {
     public ResponseEntity<UserPostResponseDto> signUp(
             @RequestBody UserPostRequestDto requestDto
     ){
-        UserPostResponseDto userPostResponseDto = userService.createUser(requestDto.getUsername(), requestDto.getEmail(),requestDto.getPassword());
+        UserPostResponseDto userPostResponseDto = userService.createUser(requestDto.getUsername(), requestDto.getEmail(),passwordEncoder.encode(requestDto.getPassword()));
         return new ResponseEntity<>(userPostResponseDto, HttpStatus.OK);
     }
 }
