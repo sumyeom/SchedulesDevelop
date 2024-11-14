@@ -1,4 +1,4 @@
-package com.example.scheduledevelopproject.service;
+package com.example.scheduledevelopproject.service.Impl;
 
 import com.example.scheduledevelopproject.dto.ScheduleGetResponseDto;
 import com.example.scheduledevelopproject.dto.SchedulePostResponseDto;
@@ -6,6 +6,7 @@ import com.example.scheduledevelopproject.entity.Schedule;
 import com.example.scheduledevelopproject.entity.User;
 import com.example.scheduledevelopproject.repository.ScheduleRepositroy;
 import com.example.scheduledevelopproject.repository.UserRepository;
+import com.example.scheduledevelopproject.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ScheduleServiceImpl implements ScheduleService{
+public class ScheduleServiceImpl implements ScheduleService {
     private final ScheduleRepositroy scheduleRepositroy;
     private final UserRepository userRepository;
 

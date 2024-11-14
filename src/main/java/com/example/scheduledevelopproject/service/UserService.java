@@ -6,11 +6,13 @@ import com.example.scheduledevelopproject.dto.UserPostResponseDto;
 import java.util.List;
 
 public interface UserService {
-    UserPostResponseDto createUser(String username, String email);
+    UserPostResponseDto createUser(String username, String email,String password);
 
     List<UserGetResponseDto> findAllUser();
 
     UserGetResponseDto findByIdUser(Long id);
 
     void deleteUser(Long userId);
+
+
 }

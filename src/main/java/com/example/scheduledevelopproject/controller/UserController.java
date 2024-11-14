@@ -5,6 +5,7 @@ import com.example.scheduledevelopproject.dto.UserPostRequestDto;
 import com.example.scheduledevelopproject.dto.UserPostResponseDto;
 import com.example.scheduledevelopproject.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,15 +13,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/home/users")
+@RequestMapping("/users")
 @RequiredArgsConstructor
+@Slf4j
 public class UserController {
 
     private final UserService userService;
 
     @PostMapping
     public ResponseEntity<UserPostResponseDto> createUser(@RequestBody UserPostRequestDto requestDto){
-        UserPostResponseDto userPostResponseDto = userService.createUser(requestDto.getUsername(), requestDto.getEmail());
+        UserPostResponseDto userPostResponseDto = userService.createUser(requestDto.getUsername(), requestDto.getEmail(),requestDto.getPassword());
         return new ResponseEntity<>(userPostResponseDto, HttpStatus.OK);
     }
 
