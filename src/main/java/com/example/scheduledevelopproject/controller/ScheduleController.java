@@ -5,10 +5,14 @@ import com.example.scheduledevelopproject.dto.SchedulePostRequestDto;
 import com.example.scheduledevelopproject.dto.SchedulePostResponseDto;
 import com.example.scheduledevelopproject.dto.SchedulePutRequestDto;
 import com.example.scheduledevelopproject.service.ScheduleService;
+import com.example.scheduledevelopproject.util.ValidationUtils;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -26,13 +30,22 @@ public class ScheduleController {
      */
     @PostMapping
     public ResponseEntity<SchedulePostResponseDto> createSchedule(
-            @RequestBody SchedulePostRequestDto requestDto
+            @Valid @RequestBody SchedulePostRequestDto requestDto,
+            BindingResult bindingResult
     ){
+        // 유효성 검사
+        if(bindingResult.hasErrors()) {
+            ValidationUtils.bindErrorMessage(bindingResult);
+        }
         SchedulePostResponseDto schedulePostResponseDto = scheduleService.createSchedule(requestDto.getTitle(),requestDto.getContent(),requestDto.getUsername());
 
         return new ResponseEntity<>(schedulePostResponseDto, HttpStatus.OK);
     }
 
+    /**
+     * 일정 전체 조회 API
+     * @return (@link ResponseEntity<List<ScheduleGetResponseDto>>} JSON 응답
+     */
     @GetMapping
     public ResponseEntity<List<ScheduleGetResponseDto>> findAllSchedule(){
         List<ScheduleGetResponseDto> scheduleGetResponseDtoList = scheduleService.findAllSchedule();
@@ -40,6 +53,11 @@ public class ScheduleController {
         return new ResponseEntity<>(scheduleGetResponseDtoList,HttpStatus.OK);
     }
 
+    /**
+     * 일정 단건 조회 API
+     * @param scheduleId    식별자
+     * @return {@link ResponseEntity<ScheduleGetResponseDto>} JSON 응답
+     */
     @GetMapping("/{scheduleId}")
     public ResponseEntity<ScheduleGetResponseDto> findByIdSchedule(@PathVariable Long scheduleId){
         ScheduleGetResponseDto scheduleGetResponseDto = scheduleService.findById(scheduleId);
@@ -47,18 +65,37 @@ public class ScheduleController {
         return new ResponseEntity<>(scheduleGetResponseDto,HttpStatus.OK);
     }
 
-    @PutMapping("/{scheduleId}")
+    /**
+     * 일정 전체 수정 API
+     * @param schedulesId 식별자
+     * @param {@link requestDto} 일정 수정 요청 객체
+     * @return {@link ResponseEntity<SchedulePostResponseDto>} JSON 응답
+     * @exception ResponseStatusException 요청 필수값이 없는 경우 400 BAD Request, 식별자로 조회된 Memo가 없는 경우 404 Not Found
+     */
+    @PutMapping("/{schedulesId}")
     public ResponseEntity<SchedulePostResponseDto> updateSchedule(
-            @PathVariable Long scheduleId,
-            @RequestBody SchedulePutRequestDto requestDto
+            @PathVariable Long schedulesId,
+            @Valid @RequestBody SchedulePutRequestDto requestDto,
+            BindingResult bindingResult
     ){
-        return new ResponseEntity<>(scheduleService.updateSchedule(scheduleId, requestDto.getTitle(), requestDto.getContent()),HttpStatus.OK);
+        // 유효성 검사
+        if(bindingResult.hasErrors()) {
+            ValidationUtils.bindErrorMessage(bindingResult);
+        }
+        return new ResponseEntity<>(scheduleService.updateSchedule(schedulesId, requestDto.getTitle(), requestDto.getContent()),HttpStatus.OK);
     }
 
-    @DeleteMapping("/{scheduleId}")
-    public ResponseEntity<Void> deleteSchedule(@PathVariable Long scheduleId){
-        scheduleService.delete(scheduleId);
+    /**
+     * 일정 삭제 API
+     * @param schedulesId 식별자
+     * @return {@link ResponseEntity<Void>} 성공시 Data 없이 200OK 상태코드만 응답.
+     * @exception ResponseStatusException 식별자로 조회된 일정이 없는 경우 404 Not Found
+     */
+    @DeleteMapping("/{schedulesId}")
+    public ResponseEntity<Void> deleteSchedule(@PathVariable Long schedulesId){
+        scheduleService.delete(schedulesId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }

@@ -3,12 +3,14 @@ package com.example.scheduledevelopproject.controller;
 import com.example.scheduledevelopproject.dto.*;
 import com.example.scheduledevelopproject.service.LoginService;
 import com.example.scheduledevelopproject.service.UserService;
+import com.example.scheduledevelopproject.util.ValidationUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,8 +28,13 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(
             @Valid @RequestBody LoginRequestDto reqeustDto,
-            HttpServletRequest request
+            HttpServletRequest request,
+            BindingResult bindingResult
     ){
+        // 유효성 검사
+        if(bindingResult.hasErrors()) {
+            ValidationUtils.bindErrorMessage(bindingResult);
+        }
         LoginResponseDto responseDto = loginService.login(reqeustDto.getEmail(), reqeustDto.getPassword());
         Long userId = responseDto.getId();
         if(userId == null){
