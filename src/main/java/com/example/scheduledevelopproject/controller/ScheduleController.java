@@ -83,13 +83,14 @@ public class ScheduleController {
     public ResponseEntity<SchedulePostResponseDto> updateSchedule(
             @PathVariable Long schedulesId,
             @Valid @RequestBody SchedulePutRequestDto requestDto,
+            @SessionAttribute(name = "userId", required = false) Long sessionId,
             BindingResult bindingResult
     ){
         // 유효성 검사
         if(bindingResult.hasErrors()) {
             ValidationUtils.bindErrorMessage(bindingResult);
         }
-        return new ResponseEntity<>(scheduleService.updateSchedule(schedulesId, requestDto.getTitle(), requestDto.getContent()),HttpStatus.OK);
+        return new ResponseEntity<>(scheduleService.updateSchedule(schedulesId, requestDto.getTitle(), requestDto.getContent(), sessionId),HttpStatus.OK);
     }
 
     /**

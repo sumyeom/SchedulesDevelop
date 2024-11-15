@@ -15,7 +15,7 @@ public enum ErrorCode {
     /* 401 로그인하지 않고 CRUD 접근 확인 */
     INVALID_LOGIN(HttpStatus.UNAUTHORIZED,"INVALID_LOGIN","로그인 후에 사용해주세요."),
     /* 401 로그인, 작성자 이름 확인 */
-    INVALID_USER_NAME(HttpStatus.UNAUTHORIZED,"INVALID_USER_NAME","로그인한 사용자와 작성자명이 일치하지 않습니다."),
+    INVALID_USER_NAME(HttpStatus.UNAUTHORIZED,"INVALID_USER_NAME","로그인한 사용자와 작성자가 일치하지 않습니다."),
     /* 401 이메일 확인 */
     INVALID_EMAIL(HttpStatus.UNAUTHORIZED,"INVALID_EMAIL","이메일이 일치하지 않습니다."),
     /* 401 비밀 번호 확인 */
