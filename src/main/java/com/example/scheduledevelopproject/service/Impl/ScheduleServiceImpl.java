@@ -58,10 +58,10 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Transactional
     @Override
-    public SchedulePostResponseDto updateSchedule(Long id, String title, String content,Long seesionId) {
+    public SchedulePostResponseDto updateSchedule(Long id, String title, String content,Long sessionId) {
 
         Schedule schedule = scheduleRepositroy.findByIdOrElseThrow(id);
-        if(schedule.getUser().getId()!=seesionId){
+        if(schedule.getUser().getId()!=sessionId){
             throw new CustomException(INVALID_USER_NAME);
         }
         schedule.setTitle(title);

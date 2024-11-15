@@ -3,17 +3,18 @@ package com.example.scheduledevelopproject.service;
 import com.example.scheduledevelopproject.dto.CommentRequestDto;
 import com.example.scheduledevelopproject.dto.CommentResponseDto;
 import jakarta.validation.Valid;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface CommentService {
-    CommentResponseDto createUser(Long scheduleId, CommentRequestDto requestDto);
+    CommentResponseDto createUser(Long scheduleId, CommentRequestDto requestDto, Long sessionId);
 
     CommentResponseDto findByIdComment(Long scheduleId, Long commentsId);
 
-    List<CommentResponseDto> findAllComment();
+    Page<CommentResponseDto> findAllComment(int page, int size);
 
-    CommentResponseDto updateComment(Long schedulesId, Long commentsId, @Valid CommentRequestDto requestDto);
+    CommentResponseDto updateComment(Long schedulesId, Long commentsId, @Valid CommentRequestDto requestDto, Long sessionId);
 
-    void deleteComment(Long commentId);
+    void deleteComment(Long commentId, Long sessionId);
+
+    Page<CommentResponseDto> findByScheduleId(Long scheduleId, int page, int size);
 }

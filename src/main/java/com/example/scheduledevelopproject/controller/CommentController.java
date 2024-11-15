@@ -6,6 +6,7 @@ import com.example.scheduledevelopproject.service.CommentService;
 import com.example.scheduledevelopproject.util.ValidationUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/schedules/{schedulesId}/comments")
+@RequestMapping("/schedulesComment")
 @RequiredArgsConstructor
 public class CommentController {
 
@@ -27,17 +28,18 @@ public class CommentController {
      * @param bindingResult
      * @return
      */
-    @PostMapping
+    @PostMapping("/{schedulesId}/comments")
     public ResponseEntity<CommentResponseDto> createComment(
             @PathVariable Long schedulesId,
             @Valid @RequestBody CommentRequestDto requestDto,
+            @SessionAttribute(name = "userId", required = false) Long sessionId,
             BindingResult bindingResult
     ){
         // 유효성 검사
         if(bindingResult.hasErrors()) {
             ValidationUtils.bindErrorMessage(bindingResult);
         }
-        CommentResponseDto commentPostResponseDto = commentservice.createUser(schedulesId, requestDto);
+        CommentResponseDto commentPostResponseDto = commentservice.createUser(schedulesId, requestDto, sessionId);
 
         return new ResponseEntity<>(commentPostResponseDto, HttpStatus.OK);
     }
@@ -48,7 +50,7 @@ public class CommentController {
      * @param commentsId
      * @return
      */
-    @GetMapping("/{commentsId}")
+    @GetMapping("/{schedulesId}/comments/{commentsId}")
     public ResponseEntity<CommentResponseDto> findByIdComment(
             @PathVariable Long schedulesId,
             @PathVariable Long commentsId
@@ -57,14 +59,28 @@ public class CommentController {
         return new ResponseEntity<>(commentPostResponseDto,HttpStatus.OK);
     }
 
+    @GetMapping("/{schedulesId}/comments")
+    public ResponseEntity<List<CommentResponseDto>> findBySchduleId(
+            @PathVariable Long schedulesId,
+            @RequestParam(defaultValue = "0", required = false) int page,
+            @RequestParam(defaultValue = "10",required = false) int size
+    ){
+        Page<CommentResponseDto> commentResponseDtoPage = commentservice.findByScheduleId(schedulesId,page,size);
+
+        return new ResponseEntity<>(commentResponseDtoPage.getContent(),HttpStatus.OK);
+    }
+
     /**
      * 전체 댓글 조회
      * @return
      */
     @GetMapping
-    public ResponseEntity<List<CommentResponseDto>> findAllComment(){
-        List<CommentResponseDto> commentPostResponseDtoList = commentservice.findAllComment();
-        return new ResponseEntity<>(commentPostResponseDtoList,HttpStatus.OK);
+    public ResponseEntity<List<CommentResponseDto>> findAllComment(
+            @RequestParam(defaultValue = "0",required = false) int page,
+            @RequestParam(defaultValue = "10",required = false) int size
+    ){
+        Page<CommentResponseDto> commentPostResponseDtoList = commentservice.findAllComment(page, size);
+        return new ResponseEntity<>(commentPostResponseDtoList.getContent(),HttpStatus.OK);
     }
 
     /**
@@ -75,11 +91,12 @@ public class CommentController {
      * @param bindingResult
      * @return
      */
-    @PutMapping("/{commentsId}")
+    @PutMapping("/{schedulesId}/comments/{commentsId}")
     public ResponseEntity<CommentResponseDto> updateComment(
             @PathVariable Long schedulesId,
             @PathVariable Long commentsId,
             @Valid @RequestBody CommentRequestDto requestDto,
+            @SessionAttribute(name = "userId", required = false) Long sessionId,
             BindingResult bindingResult
     ){
         // 유효성 검사
@@ -87,22 +104,24 @@ public class CommentController {
             ValidationUtils.bindErrorMessage(bindingResult);
         }
 
-        CommentResponseDto commentResponseDto = commentservice.updateComment(schedulesId, commentsId, requestDto);
+        CommentResponseDto commentResponseDto = commentservice.updateComment(schedulesId, commentsId, requestDto, sessionId);
         return new ResponseEntity<>(commentResponseDto,HttpStatus.OK);
     }
 
     /**
      * 선택 댓글 삭제
      * @param schedulesId
-     * @param commtensId
+     * @param commentsId
      * @return
      */
-    @DeleteMapping("/{commtensId}")
+    @DeleteMapping("/{schedulesId}/comments/{commentsId}")
     public ResponseEntity<Void> deleteComment(
             @PathVariable Long schedulesId,
-            @PathVariable Long commtensId
+            @PathVariable Long commentsId,
+            @SessionAttribute(name = "userId", required = false) Long sessionId
+
     ){
-        commentservice.deleteComment(commtensId);
+        commentservice.deleteComment(commentsId,sessionId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
