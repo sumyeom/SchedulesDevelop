@@ -34,6 +34,13 @@ public class LoginController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * 로그인 하는 API
+     * @param requestDto email, password
+     * @param request session
+     * @param bindingResult
+     * @return
+     */
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(
             @Valid @RequestBody LoginRequestDto requestDto,
@@ -55,6 +62,11 @@ public class LoginController {
         return new ResponseEntity<>(responseDto,HttpStatus.OK);
     }
 
+    /**
+     * 로그아웃 API
+     * @param request session
+     * @return
+     */
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request){
         //로그인 하지않으면 HttpSession이 null로 반환된다.
@@ -65,6 +77,11 @@ public class LoginController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * 회원 가입
+     * @param requestDto
+     * @return
+     */
     @PostMapping("/signup")
     public ResponseEntity<UserPostResponseDto> signUp(
             @RequestBody UserPostRequestDto requestDto

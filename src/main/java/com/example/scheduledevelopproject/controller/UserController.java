@@ -25,6 +25,12 @@ public class UserController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * 유저 등록 API
+     * @param {@link UserPostRequestDto} 유저 생성 요청 객체
+     * @param bindingResult error 모아주는 객체
+     * @return {@link ResponseEntity< UserPostResponseDto >} JSON 응답
+     */
     @PostMapping
     public ResponseEntity<UserPostResponseDto> createUser(
             @Valid @RequestBody UserPostRequestDto requestDto,
@@ -39,18 +45,32 @@ public class UserController {
         return new ResponseEntity<>(userPostResponseDto, HttpStatus.OK);
     }
 
+    /**
+     * 전체 유저 조회
+     * @return {@link ResponseEntity<List<UserGetResponseDto>>} JSON LIST 응답
+     */
     @GetMapping
     public  ResponseEntity<List<UserGetResponseDto>> findAllUser(){
         List<UserGetResponseDto> userGetResponseDtoList = userService.findAllUser();
         return new ResponseEntity<>(userGetResponseDtoList,HttpStatus.OK);
     }
 
+    /**
+     * 선택 유저 조회
+     * @param userId 조회할 userId
+     * @return {@link ResponseEntity<UserGetResponseDto>} JSON 응답
+     */
     @GetMapping("/{userId}")
     public ResponseEntity<UserGetResponseDto> findByIdUser(@PathVariable Long userId){
         UserGetResponseDto userGetResponseDto = userService.findByIdUser(userId);
         return new ResponseEntity<>(userGetResponseDto,HttpStatus.OK);
     }
 
+    /**
+     * 선택 유저 삭제
+     * @param userId 삭제할 userid
+     * @return HttpStatus 반환
+     */
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
         userService.deleteUser(userId);

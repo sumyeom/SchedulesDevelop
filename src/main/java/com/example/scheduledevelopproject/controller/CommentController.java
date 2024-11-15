@@ -20,6 +20,13 @@ public class CommentController {
 
     private final CommentService commentservice;
 
+    /**
+     * 댓글 작성 API
+     * @param schedulesId
+     * @param requestDto
+     * @param bindingResult
+     * @return
+     */
     @PostMapping
     public ResponseEntity<CommentResponseDto> createComment(
             @PathVariable Long schedulesId,
@@ -35,6 +42,12 @@ public class CommentController {
         return new ResponseEntity<>(commentPostResponseDto, HttpStatus.OK);
     }
 
+    /**
+     * 선택 댓글 조회
+     * @param schedulesId
+     * @param commentsId
+     * @return
+     */
     @GetMapping("/{commentsId}")
     public ResponseEntity<CommentResponseDto> findByIdComment(
             @PathVariable Long schedulesId,
@@ -44,12 +57,24 @@ public class CommentController {
         return new ResponseEntity<>(commentPostResponseDto,HttpStatus.OK);
     }
 
+    /**
+     * 전체 댓글 조회
+     * @return
+     */
     @GetMapping
     public ResponseEntity<List<CommentResponseDto>> findAllComment(){
         List<CommentResponseDto> commentPostResponseDtoList = commentservice.findAllComment();
         return new ResponseEntity<>(commentPostResponseDtoList,HttpStatus.OK);
     }
 
+    /**
+     * 선택 댓글 수정
+     * @param schedulesId
+     * @param commentsId
+     * @param requestDto
+     * @param bindingResult
+     * @return
+     */
     @PutMapping("/{commentsId}")
     public ResponseEntity<CommentResponseDto> updateComment(
             @PathVariable Long schedulesId,
@@ -66,6 +91,12 @@ public class CommentController {
         return new ResponseEntity<>(commentResponseDto,HttpStatus.OK);
     }
 
+    /**
+     * 선택 댓글 삭제
+     * @param schedulesId
+     * @param commtensId
+     * @return
+     */
     @DeleteMapping("/{commtensId}")
     public ResponseEntity<Void> deleteComment(
             @PathVariable Long schedulesId,
