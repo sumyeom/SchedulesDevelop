@@ -13,7 +13,6 @@ public interface ScheduleRepositroy extends JpaRepository<Schedule, Long> {
                 .orElseThrow(()->
                 new ResponseStatusException(HttpStatus.NOT_FOUND,"Does not exist id = " + id));
     }
-
 //    @Modifying
 //    @Query("DELETE FROM Schedule s WHERE s.user.id = :userId")
 //    void deleteByUserId(@Param("userId") Long userId);

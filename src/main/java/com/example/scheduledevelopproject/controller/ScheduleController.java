@@ -8,6 +8,7 @@ import com.example.scheduledevelopproject.service.ScheduleService;
 import com.example.scheduledevelopproject.util.ValidationUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -47,10 +48,14 @@ public class ScheduleController {
      * @return (@link ResponseEntity<List<ScheduleGetResponseDto>>} JSON 응답
      */
     @GetMapping
-    public ResponseEntity<List<ScheduleGetResponseDto>> findAllSchedule(){
-        List<ScheduleGetResponseDto> scheduleGetResponseDtoList = scheduleService.findAllSchedule();
+    public ResponseEntity<List<ScheduleGetResponseDto>> findAllSchedule(
+            @RequestParam(defaultValue = "0",required = false) int page,
+            @RequestParam(defaultValue = "10",required = false) int size
+    ){
 
-        return new ResponseEntity<>(scheduleGetResponseDtoList,HttpStatus.OK);
+        Page<ScheduleGetResponseDto> allSchedule = scheduleService.findAllSchedule(page, size);
+
+        return new ResponseEntity<>(allSchedule.getContent(),HttpStatus.OK);
     }
 
     /**

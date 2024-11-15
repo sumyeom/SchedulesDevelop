@@ -8,10 +8,12 @@ import com.example.scheduledevelopproject.repository.ScheduleRepositroy;
 import com.example.scheduledevelopproject.repository.UserRepository;
 import com.example.scheduledevelopproject.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,11 +32,13 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<ScheduleGetResponseDto> findAllSchedule() {
-        return scheduleRepositroy.findAll()
-                .stream()
-                .map(ScheduleGetResponseDto::toDto)
-                .toList();
+    public Page<ScheduleGetResponseDto> findAllSchedule(int page, int size) {
+        if(page > 0){
+            page--;
+        }
+        Pageable pageable = PageRequest.of(page,size, Sort.by(Sort.Order.desc("modifiedAt")));
+        Page<Schedule> schedules = scheduleRepositroy.findAll(pageable);
+        return schedules.map(ScheduleGetResponseDto::new);
     }
 
     @Override

@@ -2,13 +2,12 @@ package com.example.scheduledevelopproject.service;
 
 import com.example.scheduledevelopproject.dto.ScheduleGetResponseDto;
 import com.example.scheduledevelopproject.dto.SchedulePostResponseDto;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface ScheduleService {
     SchedulePostResponseDto createSchedule(String title, String content, String username);
 
-    List<ScheduleGetResponseDto> findAllSchedule();
+    Page<ScheduleGetResponseDto> findAllSchedule(int page, int size);
 
     ScheduleGetResponseDto findById(Long id);
 
