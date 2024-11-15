@@ -22,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ScheduleController {
 
+
     private final ScheduleService scheduleService;
 
     /**
@@ -32,13 +33,14 @@ public class ScheduleController {
     @PostMapping
     public ResponseEntity<SchedulePostResponseDto> createSchedule(
             @Valid @RequestBody SchedulePostRequestDto requestDto,
+            @SessionAttribute(name = "userId", required = false) Long id,
             BindingResult bindingResult
     ){
         // 유효성 검사
         if(bindingResult.hasErrors()) {
             ValidationUtils.bindErrorMessage(bindingResult);
         }
-        SchedulePostResponseDto schedulePostResponseDto = scheduleService.createSchedule(requestDto.getTitle(),requestDto.getContent(),requestDto.getUsername());
+        SchedulePostResponseDto schedulePostResponseDto = scheduleService.createSchedule(requestDto.getTitle(),requestDto.getContent(),requestDto.getUsername(), id);
 
         return new ResponseEntity<>(schedulePostResponseDto, HttpStatus.OK);
     }

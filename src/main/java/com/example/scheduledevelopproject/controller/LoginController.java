@@ -1,7 +1,11 @@
 package com.example.scheduledevelopproject.controller;
 
 import com.example.scheduledevelopproject.config.PasswordEncoder;
-import com.example.scheduledevelopproject.dto.*;
+import com.example.scheduledevelopproject.dto.LoginRequestDto;
+import com.example.scheduledevelopproject.dto.LoginResponseDto;
+import com.example.scheduledevelopproject.dto.UserPostRequestDto;
+import com.example.scheduledevelopproject.dto.UserPostResponseDto;
+import com.example.scheduledevelopproject.exception.CustomException;
 import com.example.scheduledevelopproject.service.LoginService;
 import com.example.scheduledevelopproject.service.UserService;
 import com.example.scheduledevelopproject.util.ValidationUtils;
@@ -17,7 +21,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+
+import static com.example.scheduledevelopproject.exception.ErrorCode.USER_NOT_FOUND;
 
 @RestController
 @RequestMapping("/")
@@ -43,10 +48,10 @@ public class LoginController {
         LoginResponseDto responseDto = loginService.login(requestDto.getEmail(), requestDto.getPassword());
         Long userId = responseDto.getId();
         if(userId == null){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+            throw new CustomException(USER_NOT_FOUND);
         }
         HttpSession session = request.getSession();
-        session.setAttribute("email", requestDto.getEmail());
+        session.setAttribute("userId", userId);
         return new ResponseEntity<>(responseDto,HttpStatus.OK);
     }
 
@@ -55,7 +60,7 @@ public class LoginController {
         //로그인 하지않으면 HttpSession이 null로 반환된다.
         HttpSession session = request.getSession(false);
         if(session != null){
-            session.invalidate(); // 해당 세션(데이터)dmf tkrwp
+            session.invalidate(); // 해당 세션(데이터)을 삭제
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }

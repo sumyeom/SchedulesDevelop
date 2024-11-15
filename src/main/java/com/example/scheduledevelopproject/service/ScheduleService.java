@@ -5,7 +5,7 @@ import com.example.scheduledevelopproject.dto.SchedulePostResponseDto;
 import org.springframework.data.domain.Page;
 
 public interface ScheduleService {
-    SchedulePostResponseDto createSchedule(String title, String content, String username);
+    SchedulePostResponseDto createSchedule(String title, String content, String username, Long userId);
 
     Page<ScheduleGetResponseDto> findAllSchedule(int page, int size);
 

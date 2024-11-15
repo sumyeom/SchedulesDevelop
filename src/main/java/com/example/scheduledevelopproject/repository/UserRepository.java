@@ -1,11 +1,13 @@
 package com.example.scheduledevelopproject.repository;
 
 import com.example.scheduledevelopproject.entity.User;
+import com.example.scheduledevelopproject.exception.CustomException;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
+
+import static com.example.scheduledevelopproject.exception.ErrorCode.INVALID_EMAIL;
+import static com.example.scheduledevelopproject.exception.ErrorCode.USER_NOT_FOUND;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findUserByUsername(String username);
@@ -14,16 +16,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     default User findUserByEmailOrElseThrow(String email) {
         return findUserByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인 실패"));
+                .orElseThrow(() -> new CustomException(INVALID_EMAIL));
     }
     default User findUserByUsernameOrElseThrow(String username){
         return findUserByUsername(username)
                 .orElseThrow(()->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND,"Does not exist username = " + username));
+                        new CustomException(USER_NOT_FOUND));
     }
     default User findByIdOrElseThrow(Long id){
         return findById(id)
                 .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND,"Does not exist user id = " + id));
+                        new CustomException(USER_NOT_FOUND));
     }
 }

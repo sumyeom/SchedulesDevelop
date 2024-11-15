@@ -56,7 +56,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentResponseDto updateComment(Long schedulesId, Long commentsId, CommentRequestDto requestDto) {
         Comment findComment = commentRepository.findByIdOrElseThrow(commentsId);
 
-        Schedule schedule = scheduleRepositroy.findByIdOrElseThrow(schedulesId);
+        Schedule schedule = scheduleRepositroy.findByIdOrElseThrow(findComment.getId());
         User user = userRepository.findUserByUsernameOrElseThrow(requestDto.getUsername());
         findComment.setContent(requestDto.getComment());
         Comment savedComment = commentRepository.save(findComment);

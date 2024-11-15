@@ -1,5 +1,8 @@
 package com.example.scheduledevelopproject.filter;
 
+import com.example.scheduledevelopproject.exception.CustomException;
+import com.example.scheduledevelopproject.exception.ErrorResponseEntity;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -8,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.PatternMatchUtils;
 
 import java.io.IOException;
+
+import static com.example.scheduledevelopproject.exception.ErrorCode.INVALID_LOGIN;
 
 @Slf4j
 public class LoginFilter implements Filter {
@@ -25,18 +30,35 @@ public class LoginFilter implements Filter {
         String requestURI = httpRequest.getRequestURI();
 
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        try{
+            if(!isWhiteList(requestURI)){
+                HttpSession session = httpRequest.getSession(false);
 
-        if(!isWhiteList(requestURI)){
-            HttpSession session = httpRequest.getSession(false);
+                if(session == null || session.getAttribute("userId") == null){
+                    throw new CustomException(INVALID_LOGIN);
+                }
 
-            if(session == null || session.getAttribute("email") == null){
-                throw new RuntimeException("로그인 해주세요");
+                log.info("로그인에 성공했습니다.");
             }
 
-            log.info("로그인에 성공했습니다.");
+            filterChain.doFilter(request,response);
+        }catch(CustomException e){
+            httpServletResponse.setStatus(e.getErrorCode().getHttpStatus().value());
+            httpServletResponse.setContentType("application/json;charset=UTF-8");
+
+            ErrorResponseEntity errorResponse = ErrorResponseEntity.builder()
+                    .status(e.getErrorCode().getHttpStatus().value())
+                    .code(e.getErrorCode().name())
+                    .message(e.getErrorCode().getMessage())
+                    .detailMessage(e.getDetailMessage())
+                    .build();
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonResponse = objectMapper.writeValueAsString(errorResponse);
+
+            httpServletResponse.getWriter().write(jsonResponse);
         }
 
-        filterChain.doFilter(request,response);
     }
 
     private boolean isWhiteList(String requestURI){

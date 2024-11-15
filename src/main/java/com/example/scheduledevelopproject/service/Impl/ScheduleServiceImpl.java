@@ -4,6 +4,7 @@ import com.example.scheduledevelopproject.dto.ScheduleGetResponseDto;
 import com.example.scheduledevelopproject.dto.SchedulePostResponseDto;
 import com.example.scheduledevelopproject.entity.Schedule;
 import com.example.scheduledevelopproject.entity.User;
+import com.example.scheduledevelopproject.exception.CustomException;
 import com.example.scheduledevelopproject.repository.ScheduleRepositroy;
 import com.example.scheduledevelopproject.repository.UserRepository;
 import com.example.scheduledevelopproject.service.ScheduleService;
@@ -15,6 +16,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.example.scheduledevelopproject.exception.ErrorCode.INVALID_USER_NAME;
+
 @Service
 @RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService {
@@ -22,8 +25,12 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final UserRepository userRepository;
 
     @Override
-    public SchedulePostResponseDto createSchedule(String title, String content, String username) {
-        User user = userRepository.findUserByUsernameOrElseThrow(username);
+    public SchedulePostResponseDto createSchedule(String title, String content, String username, Long userId) {
+
+        if(!isUsernameMatching(userId,username)){
+            throw new CustomException(INVALID_USER_NAME);
+        }
+        User user = userRepository.findByIdOrElseThrow(userId);
 
         Schedule schedule = new Schedule(title, content);
         schedule.setUser(user);
@@ -38,6 +45,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
         Pageable pageable = PageRequest.of(page,size, Sort.by(Sort.Order.desc("modifiedAt")));
         Page<Schedule> schedules = scheduleRepositroy.findAll(pageable);
+
         return schedules.map(ScheduleGetResponseDto::new);
     }
 
@@ -63,5 +71,11 @@ public class ScheduleServiceImpl implements ScheduleService {
     public void delete(Long scheduleId) {
         Schedule findSchedule = scheduleRepositroy.findByIdOrElseThrow(scheduleId);
         scheduleRepositroy.delete(findSchedule);
+    }
+
+    private boolean isUsernameMatching(Long id, String username){
+        return userRepository.findById(id)
+                .map(user -> user.getUsername().equals(username))
+                .orElse(false);
     }
 }

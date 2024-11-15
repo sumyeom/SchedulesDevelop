@@ -1,4 +1,4 @@
-package com.example.scheduledevelopproject.webconfig;
+package com.example.scheduledevelopproject.config;
 
 import com.example.scheduledevelopproject.filter.LoginFilter;
 import jakarta.servlet.Filter;
