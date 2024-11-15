@@ -47,6 +47,9 @@ Spring을 이용하여 일정을 관리할 수 있는 앱 서버 업그레이드
   - 수정일 기준으로 내림차순으로 정렬
 
 ---
+### Trouble Shooting
+1. [Schedule Develop](https://withsumyeom.tistory.com/entry/Trouble-Shooting-Schedule-Develop-Project)
+---
 ## API 명세서
 
 ### Schedules
@@ -1754,7 +1757,8 @@ Spring을 이용하여 일정을 관리할 수 있는 앱 서버 업그레이드
 
 ## ERD
 
-![alt text](image-1.png)
+![image](https://github.com/user-attachments/assets/1c0dccc9-8297-42a4-9a60-e88ec11745f0)
+
 
 ---
 
@@ -1765,29 +1769,43 @@ Spring을 이용하여 일정을 관리할 수 있는 앱 서버 업그레이드
   - Scehdule table
 
   ~~~sql
-  CREATE TABLE schedule (
-        id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '일정 식별자',
-        uid CHAR(36) NOT NULL COMMENT '작성자 uid',
-        title VARCHAR(50) NOT NULL COMMENT '일정 제목',
-        content VARCHAR(100) NOT NULL COMMENT '일정 내용',
-        created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '일정 작성 날짜',
-        updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '일정 수정 날짜',
-        FOREIGN KEY (uid) REFERENCES user (uid)
-  )
+  create table schedule (
+        created_at datetime(6),
+        id bigint not null auto_increment,
+        modified_at datetime(6),
+        user_id bigint,
+        content longtext not null,
+        title varchar(255) not null,
+        primary key (id)
+    )
   ~~~
 
   - User table
 
   ```sql
-  CREATE TABLE user(
-       uid CHAR(36) NOT NULL PRIMARY KEY COMMENT '작성자 식별자',
-       name VARCHAR(30) NOT NULL COMMENT '작성자 이름',
-       password VARCHAR(100) NOT NULL COMMENT '작성자 비밀번호',
-       email VARCHAR(50) NOT NULL COMMENT '작성자 이메일',
-       created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '일정 작성 날짜',
-       updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '일정 수정 날짜'
+  create table user (
+        created_at datetime(6),
+        id bigint not null auto_increment,
+        modified_at datetime(6),
+        email varchar(255) not null,
+        password varchar(255) not null,
+        username varchar(255) not null,
+        primary key (id)
   )
 
+  ```
+
+  - Comment table
+  ```sql
+    create table comment (
+          created_at datetime(6),
+          id bigint not null auto_increment,
+          modified_at datetime(6),
+          schedule_id bigint,
+          user_id bigint,
+          content varchar(255) not null,
+          primary key (id)
+      )
   ```
 
 - 값 삽입
@@ -1795,15 +1813,29 @@ Spring을 이용하여 일정을 관리할 수 있는 앱 서버 업그레이드
   - Schedule table에 삽입
 
   ~~~sql
-  INSERT INTO schedule (uid, title, content)
-  VALUES ('1523b4ab-08a1-49d5-bad8-b854514e873c','11월 1일 데일리 스크럼', '1. Spring 강의 듣기 | 2. Lv.0 과제 완료' )
+  insert 
+    into
+        schedule (content, created_at, modified_at, title, user_id) 
+    values
+        (?, ?, ?, ?, ?)
   ~~~
 
   - User table에 삽입
 
   ~~~sql
-  INSERT INTO user (uid, name, password, email)
-  VALUES ('1523b4ab-08a1-49d5-bad8-b854514e873c', '숨염','qwer!@#$','sumyeom@gmail.com')
+    into
+        user (created_at, email, modified_at, password, username) 
+    values
+        (?, ?, ?, ?, ?)
+  ~~~
+
+  - Comment table 에 삽입
+  ~~~sql
+    insert 
+    into
+        comment (content, created_at, modified_at, schedule_id, user_id) 
+    values
+        (?, ?, ?, ?, ?)
   ~~~
 
 - 값 조회
@@ -1826,23 +1858,19 @@ Spring을 이용하여 일정을 관리할 수 있는 앱 서버 업그레이드
     SELECT * FROM user where uid = '9ccb2fd0-97af-11ef-82ae-0fc9c3770cd3'
     ~~~
 
-  - user와 schedule 테이블에서 uid가 같은 값 중 schedule의 updated_date와 user의 name을 선택하여 조회
+  - 로그인
     ~~~sql
-    SELECT s.id, u.name, u.email, s.title, s.content, s.created_date, s.updated_date
-    FROM schedule s
-    JOIN user u ON s.uid = u.uid
-    AND (DATE(s.updated_date) = '2024-11-08' OR '2024-11-08' IS NULL)
-    AND (u.name = '숨염' OR '숨염' IS NULL
-    ORDER BY s.updated_date DESC;
-    ~~~
-
-  - 페이지 나누어서 조회
-    ~~~sql
-    SELECT s.id, u.name, u.email, s.title, s.content, s.created_date, s.updated_date
-    FROM schedule s
-    JOIN user u ON s.uid = u.uid
-    ORDER BY s.updated_date DESC
-    LIMIT 4 OFFSET 1 ;
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.modified_at,
+        u1_0.password,
+        u1_0.username 
+    from
+        user u1_0 
+    where
+        u1_0.email=?
     ~~~
 
 - 값 수정
@@ -1857,6 +1885,14 @@ Spring을 이용하여 일정을 관리할 수 있는 앱 서버 업그레이드
 
     ~~~sql
     UPDATE user SET name = '점숨염' WHERE id = '9ccb2fd0-97af-11ef-82ae-0fc9c3770cd3'
+    ~~~
+
+- 값 삭제
+
+  - 선택 일정 삭제
+
+    ~~~sql
+    DELETE FROM schedule where id = 1
     ~~~
 
 - 값 삭제
