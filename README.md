@@ -47,6 +47,9 @@ Spring을 이용하여 일정을 관리할 수 있는 앱 서버 업그레이드
   - 수정일 기준으로 내림차순으로 정렬
 
 ---
+### Trouble Shooting
+1. [Schedule Develop](https://withsumyeom.tistory.com/entry/Trouble-Shooting-Schedule-Develop-Project)
+---
 ## API 명세서
 
 ### Schedules
