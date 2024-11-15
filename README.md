@@ -1079,17 +1079,17 @@ Spring을 이용하여 일정을 관리할 수 있는 앱 서버 업그레이드
       }
       ```
     - 401 : 로그인 실패
-    ```plaintext
-    HTTP/1.1 401 Unauthorized
-    ```
-    ```json
-    {
-      "status": 401,
-      "code": "INVALID_PASSWORD",
-      "message": "비밀 번호가 일치하지 않습니다.",
-     "detailMessage": "비밀 번호가 일치하지 않습니다."
-    }
-    ```
+      ```plaintext
+      HTTP/1.1 401 Unauthorized
+      ```
+      ```json
+      {
+        "status": 401,
+        "code": "INVALID_PASSWORD",
+        "message": "비밀 번호가 일치하지 않습니다.",
+      "detailMessage": "비밀 번호가 일치하지 않습니다."
+      }
+      ```
 </details>
 
 <details>
